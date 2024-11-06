@@ -5,6 +5,8 @@
 #include <array>
 #include <vector>
 #include <chrono>
+#include <cstdlib>
+#include <ctime> 
 
 // Classe TicTacToe
 class TicTacToe {
@@ -208,8 +210,12 @@ private:
 int main() {
     // Inicializar o jogo e os jogadores
     TicTacToe game;
-    Player playerX(game, 'X', "sequencial");
-    Player playerO(game, 'O', "aleatorio");
+    // Gerar objetivo aleatório
+    std::srand(std::time(0));  // Tempo atual como semente para rand()
+    bool x_sequencial = std::rand() % 2 == 0;  // Aleatório entre 0 e 1
+
+    Player playerX(game, 'X', x_sequencial ? "sequencial" : "aleatorio");
+    Player playerO(game, 'O', x_sequencial ? "aleatorio" : "sequencial");
 
     // Criar as threads para os jogadores
     std::thread t1(&Player::play, &playerX);
@@ -221,6 +227,10 @@ int main() {
 
     // Exibir o resultado final do jogoS
     if (game.is_game_over()) {
+        // Fala qual metodo foi escolhido para cada jogador
+        std::cout << "Jogador X jogou de forma " << (x_sequencial ? "sequencial" : "aleatória") << std::endl;
+        std::cout << "Jogador O jogou de forma " << (x_sequencial ? "aleatória\n" : "sequencial\n") << std::endl;
+
         char winner = game.get_winner();
         if (winner == 'D') {
             std::cout << "O jogo terminou EMPATADO.\n";
